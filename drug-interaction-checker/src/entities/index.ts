@@ -1,0 +1,12 @@
+export { Drug } from './drug.entity';
+export { DrugDrugInteraction } from './drug-drug-interaction.entity';
+export { Target } from './target.entity';
+export { DrugTargetInteraction } from './drug-target-interaction.entity';
+export { ProteinProteinInteraction } from './protein-protein-interaction.entity';
+export { Gene } from './gene.entity';
+export { Disease } from './disease.entity';
+export { GeneDiseaseAssociation } from './gene-disease-association.entity';
+export { CellLine } from './cell-line.entity';
+export { DrugResponse } from './drug-response.entity';
+export { User } from './user.entity';
+export { SearchHistory } from './search-history.entity';

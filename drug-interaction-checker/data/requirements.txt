@@ -1,0 +1,5 @@
+# TDC Data Download Script — Requirements
+# Install: pip install -r requirements.txt
+
+PyTDC>=1.0.0
+pandas>=2.0.0
