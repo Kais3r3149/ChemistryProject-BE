@@ -25,7 +25,7 @@ export class User {
   @Column({ type: 'varchar', length: 20, default: 'user' })
   role!: string; // 'user' | 'admin'
 
-  @Column({ type: 'boolean', default: true })
+  @Column({ type: 'bit', default: 1 })
   isActive!: boolean;
 
   @CreateDateColumn()

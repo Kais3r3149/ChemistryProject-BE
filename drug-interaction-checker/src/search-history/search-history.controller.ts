@@ -1,4 +1,4 @@
-import { Controller, Get, Query, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query, UseGuards, Request } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiTags, ApiOperation } from '@nestjs/swagger';
 import { SearchHistoryService } from './search-history.service';
@@ -10,7 +10,7 @@ import { User } from '../entities/user.entity';
 @UseGuards(AuthGuard('jwt'))
 @ApiBearerAuth()
 export class SearchHistoryController {
-  constructor(private readonly searchHistoryService: SearchHistoryService) {}
+  constructor(private readonly searchHistoryService: SearchHistoryService) { }
 
   @Get()
   @ApiOperation({ summary: 'Get current user search history' })
@@ -36,5 +36,20 @@ export class SearchHistoryController {
   async getRecent(@Request() req: { user: User }) {
     const items = await this.searchHistoryService.getRecent(req.user.id);
     return { success: true, data: items };
+  }
+
+  @Post()
+  @ApiOperation({ summary: 'Record a new search' })
+  async create(
+    @Request() req: { user: User },
+    @Body() body: { searchType: string; query: string; resultCount: number },
+  ) {
+    const item = await this.searchHistoryService.create(
+      req.user.id,
+      body.searchType,
+      body.query,
+      body.resultCount,
+    );
+    return { success: true, data: item };
   }
 }

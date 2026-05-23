@@ -8,10 +8,8 @@ export interface DdiResult {
   id: number;
   drugA: { id: number; name: string };
   drugB: { id: number; name: string };
-  interactionType: number;
   severity: SeverityLevel;
   description: string | null;
-  confidence: number | null;
   source: string;
 }
 
@@ -27,7 +25,7 @@ export class DdiService {
   constructor(
     @InjectRepository(DrugDrugInteraction)
     private readonly ddiRepository: Repository<DrugDrugInteraction>,
-  ) {}
+  ) { }
 
   /**
    * Search DDI between two specific drugs (bidirectional).
@@ -116,10 +114,8 @@ export class DdiService {
       id: i.id,
       drugA: { id: i.drugA.id, name: i.drugA.name },
       drugB: { id: i.drugB.id, name: i.drugB.name },
-      interactionType: i.interactionType,
       severity: i.severity,
       description: i.description,
-      confidence: i.confidence,
       source: i.source,
     };
   }

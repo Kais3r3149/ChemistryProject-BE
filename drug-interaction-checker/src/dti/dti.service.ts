@@ -7,8 +7,7 @@ export interface DtiResult {
   id: number;
   drug: { id: number; name: string };
   target: { id: number; name: string; uniprotId: string | null };
-  affinity: number | null;
-  affinityUnit: string | null;
+  knownAction: string | null;
   source: string;
 }
 
@@ -24,7 +23,7 @@ export class DtiService {
   constructor(
     @InjectRepository(DrugTargetInteraction)
     private readonly dtiRepository: Repository<DrugTargetInteraction>,
-  ) {}
+  ) { }
 
   /**
    * Get all DTIs for a specific drug.
@@ -39,7 +38,7 @@ export class DtiService {
       relations: ['drug', 'target'],
       skip: (page - 1) * limit,
       take: limit,
-      order: { affinity: 'ASC' },
+      order: { id: 'ASC' },
     });
 
     return {
@@ -65,7 +64,7 @@ export class DtiService {
       .where('target.name LIKE :q', { q: `%${targetQuery}%` })
       .orWhere('target.uniprotId = :exact', { exact: targetQuery })
       .orWhere('target.geneSymbol = :exact', { exact: targetQuery })
-      .orderBy('dti.affinity', 'ASC')
+      .orderBy('dti.id', 'ASC')
       .skip((page - 1) * limit)
       .take(limit);
 
@@ -92,8 +91,7 @@ export class DtiService {
         name: i.target.name,
         uniprotId: i.target.uniprotId,
       },
-      affinity: i.affinity,
-      affinityUnit: i.affinityUnit,
+      knownAction: i.knownAction,
       source: i.source,
     };
   }

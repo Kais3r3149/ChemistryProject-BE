@@ -18,7 +18,8 @@ import { User } from '../entities/user.entity';
       useFactory: (configService: ConfigService): JwtModuleOptions => ({
         secret: configService.get<string>('JWT_SECRET'),
         signOptions: {
-          expiresIn: Number(configService.get<string>('JWT_EXPIRES_IN', '604800')),
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          expiresIn: configService.get<string>('JWT_EXPIRES_IN', '7d') as any,
         },
       }),
     }),
@@ -27,4 +28,4 @@ import { User } from '../entities/user.entity';
   providers: [AuthService, JwtStrategy],
   exports: [AuthService, JwtModule],
 })
-export class AuthModule {}
+export class AuthModule { }

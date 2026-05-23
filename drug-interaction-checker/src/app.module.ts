@@ -12,7 +12,8 @@ import { GdaModule } from './gda/gda.module';
 import { DrugResponseModule } from './drug-response/drug-response.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { SearchHistoryModule } from './search-history/search-history.module';
-import { parseDatabaseUrl } from './database/parse-database-url';
+import { DrugFoodModule } from './drug-food/drug-food.module';
+import { DrugConditionModule } from './drug-condition/drug-condition.module';
 
 @Module({
   imports: [
@@ -22,27 +23,28 @@ import { parseDatabaseUrl } from './database/parse-database-url';
       envFilePath: '.env',
     }),
 
-    // TypeORM + PostgreSQL (Supabase)
+    // TypeORM + SQL Server (SSMS)
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
-        const parsed = parseDatabaseUrl(
-          configService.get<string>('DATABASE_URL'),
-        );
         const isDev =
-          configService.get<string>('NODE_ENV') === 'development';
+          configService.get<string>('NODE_ENV') !== 'production';
 
         return {
-          type: 'postgres' as const,
-          host: parsed?.host ?? configService.get<string>('DB_HOST', 'localhost'),
-          port: parsed?.port ?? configService.get<number>('DB_PORT', 5432),
-          username: parsed?.username ?? configService.get<string>('DB_USERNAME', 'postgres'),
-          password: parsed?.password ?? configService.get<string>('DB_PASSWORD', ''),
-          database: parsed?.database ?? configService.get<string>('DB_DATABASE', 'postgres'),
+          type: 'mssql' as const,
+          host: configService.get<string>('DB_HOST', 'localhost'),
+          port: configService.get<number>('DB_PORT', 1433),
+          username: configService.get<string>('DB_USERNAME', 'sa'),
+          password: configService.get<string>('DB_PASSWORD', ''),
+          database: configService.get<string>('DB_DATABASE', 'DrugInteractionDB'),
+          options: {
+            instanceName: configService.get<string>('DB_INSTANCE', ''),
+            encrypt: false,
+            trustServerCertificate: true,
+          },
           autoLoadEntities: true,
           synchronize: isDev,
-          ssl: parsed?.ssl ?? { rejectUnauthorized: false },
           logging: isDev,
         };
       },
@@ -58,8 +60,10 @@ import { parseDatabaseUrl } from './database/parse-database-url';
     DrugResponseModule,
     DashboardModule,
     SearchHistoryModule,
+    DrugFoodModule,
+    DrugConditionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

@@ -12,8 +12,8 @@ import { SeverityLevel } from '../common/types';
 
 /**
  * Drug-Drug Interaction entity.
- * ~191K records from TDC DDI dataset.
- * TDC Y column (0-85) maps to interactionType, then to severity.
+ * ~1.4M records from DrugBank full database XML.
+ * drugAId/drugBId reference drugs.id (FK).
  */
 @Entity('drug_drug_interactions')
 @Index(['drugAId', 'drugBId'])
@@ -35,9 +35,6 @@ export class DrugDrugInteraction {
   @JoinColumn({ name: 'drugBId' })
   drugB!: Drug;
 
-  @Column({ type: 'smallint' })
-  interactionType!: number; // TDC Y value: 0-85
-
   @Column({
     type: 'varchar',
     length: 20,
@@ -46,13 +43,10 @@ export class DrugDrugInteraction {
   })
   severity!: SeverityLevel;
 
-  @Column({ type: 'varchar', length: 2000, nullable: true })
+  @Column({ type: 'nvarchar', length: 'max', nullable: true })
   description!: string | null;
 
-  @Column({ type: 'float', nullable: true })
-  confidence!: number | null;
-
-  @Column({ type: 'varchar', length: 50, default: 'TDC' })
+  @Column({ type: 'varchar', length: 20, default: 'DrugBank' })
   source!: string;
 
   @CreateDateColumn()

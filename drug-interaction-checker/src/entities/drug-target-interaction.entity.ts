@@ -12,7 +12,7 @@ import { Target } from './target.entity';
 
 /**
  * Drug-Target Interaction entity.
- * From TDC DTI datasets (DAVIS, BindingDB, KIBA).
+ * From DrugBank full database XML (<targets> section).
  */
 @Entity('drug_target_interactions')
 @Index(['drugId', 'targetId'])
@@ -34,13 +34,10 @@ export class DrugTargetInteraction {
   @JoinColumn({ name: 'targetId' })
   target!: Target;
 
-  @Column({ type: 'float', nullable: true })
-  affinity!: number | null; // Kd, Ki, IC50, or binding score
-
   @Column({ type: 'varchar', length: 20, nullable: true })
-  affinityUnit!: string | null; // nM, uM, etc.
+  knownAction!: string | null; // yes / no / unknown
 
-  @Column({ type: 'varchar', length: 50, default: 'TDC' })
+  @Column({ type: 'varchar', length: 20, default: 'DrugBank' })
   source!: string;
 
   @CreateDateColumn()
