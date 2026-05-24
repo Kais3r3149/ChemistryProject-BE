@@ -14,6 +14,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
 import { SearchHistoryModule } from './search-history/search-history.module';
 import { DrugFoodModule } from './drug-food/drug-food.module';
 import { DrugConditionModule } from './drug-condition/drug-condition.module';
+import { DrugSideEffectModule } from './drug-side-effect/drug-side-effect.module';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { DrugConditionModule } from './drug-condition/drug-condition.module';
     SearchHistoryModule,
     DrugFoodModule,
     DrugConditionModule,
+    DrugSideEffectModule,
   ],
   controllers: [AppController],
   providers: [AppService],
