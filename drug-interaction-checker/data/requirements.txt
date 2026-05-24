@@ -1,7 +1,0 @@
-# DrugBank XML Parser — Requirements
-# Install: pip install -r requirements.txt
-# Note: parse_drugbank.py uses only Python stdlib (xml.etree, csv, pathlib)
-# No additional packages required to run the parser.
-
-# Optional — only needed if you extend the script with pandas/numpy
-pandas>=2.0.0

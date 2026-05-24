@@ -1,12 +1,23 @@
-import { Controller, Get, Query } from '@nestjs/common';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { Controller, Get, Post, Query, Body } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiBody } from '@nestjs/swagger';
+import { IsArray, IsInt, ArrayMinSize, Min } from 'class-validator';
+import { Type } from 'class-transformer';
 import { DdiService } from './ddi.service';
 import { DdiSearchDto, DdiByDrugDto } from './dto';
+
+class MultiDdiDto {
+  @IsArray()
+  @ArrayMinSize(2)
+  @IsInt({ each: true })
+  @Min(1, { each: true })
+  @Type(() => Number)
+  drugIds!: number[];
+}
 
 @ApiTags('Drug-Drug Interactions')
 @Controller('ddi')
 export class DdiController {
-  constructor(private readonly ddiService: DdiService) {}
+  constructor(private readonly ddiService: DdiService) { }
 
   @Get('search')
   @ApiOperation({ summary: 'Search DDI between two drugs' })
@@ -36,6 +47,18 @@ export class DdiController {
         page: result.page,
         limit: result.limit,
       },
+    };
+  }
+
+  @Post('multi')
+  @ApiOperation({ summary: 'Check DDI among multiple drugs (all pairs)' })
+  @ApiBody({ schema: { example: { drugIds: [1, 2, 3] } } })
+  async searchMulti(@Body() dto: MultiDdiDto) {
+    const results = await this.ddiService.searchMulti(dto.drugIds);
+    return {
+      success: true,
+      data: results,
+      meta: { total: results.length },
     };
   }
 

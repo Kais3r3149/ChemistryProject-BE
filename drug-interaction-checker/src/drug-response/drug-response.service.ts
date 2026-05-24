@@ -24,7 +24,40 @@ export class DrugResponseService {
   constructor(
     @InjectRepository(DrugResponse)
     private readonly drugResponseRepository: Repository<DrugResponse>,
-  ) {}
+  ) { }
+
+  /**
+   * Search drug responses by drug name (partial match).
+   */
+  async searchByName(
+    drugName: string,
+    cellLineFilter?: string,
+    page = 1,
+    limit = 20,
+  ): Promise<PaginatedResult<DrugResponseResult>> {
+    const qb = this.drugResponseRepository
+      .createQueryBuilder('dr')
+      .leftJoinAndSelect('dr.drug', 'drug')
+      .leftJoinAndSelect('dr.cellLine', 'cellLine')
+      .where('drug.name LIKE :name', { name: `%${drugName}%` });
+
+    if (cellLineFilter) {
+      qb.andWhere('cellLine.name LIKE :cl', { cl: `%${cellLineFilter}%` });
+    }
+
+    qb.orderBy('dr.value', 'ASC')
+      .skip((page - 1) * limit)
+      .take(limit);
+
+    const [items, total] = await qb.getManyAndCount();
+
+    return {
+      items: items.map((i) => this.mapToResult(i)),
+      total,
+      page,
+      limit,
+    };
+  }
 
   /**
    * Search drug responses by drug with optional cell line filter.

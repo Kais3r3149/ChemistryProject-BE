@@ -45,6 +45,23 @@ export class DdiService {
   }
 
   /**
+   * Search DDI among multiple drugs — returns all interacting pairs.
+   */
+  async searchMulti(drugIds: number[]): Promise<DdiResult[]> {
+    if (drugIds.length < 2) return [];
+
+    const qb = this.ddiRepository
+      .createQueryBuilder('ddi')
+      .leftJoinAndSelect('ddi.drugA', 'drugA')
+      .leftJoinAndSelect('ddi.drugB', 'drugB')
+      .where('ddi.drugAId IN (:...ids) AND ddi.drugBId IN (:...ids)', { ids: drugIds })
+      .orderBy('ddi.severity', 'ASC');
+
+    const items = await qb.getMany();
+    return items.map((i) => this.mapToResult(i));
+  }
+
+  /**
    * Get all DDIs for a specific drug with optional severity filter.
    */
   async findByDrug(
